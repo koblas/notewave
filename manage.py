@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+
+import sys, os
+ROOT = os.path.abspath(os.path.dirname(__file__))
+path = lambda *args: os.path.join(ROOT, *args)
+sys.path.insert(0, path("libs"))
+
 from django.core.management import execute_manager
 try:
     import settings # Assumed to be in the same directory.
