@@ -1,0 +1,392 @@
+import uuid, base64, urlparse, simplejson
+
+from django.core.cache import cache
+from django.utils.translation import ugettext_lazy as _
+from django.db import models
+from django import forms
+from django.http import HttpResponse, HttpResponseRedirect, QueryDict, Http404
+from django.template import RequestContext, loader
+from django.core.urlresolvers import reverse
+
+from oauth import oauth, client
+from openid.consumer import consumer
+from openid.store import memstore
+import openid.message
+from openid import association, oidutil
+from openid.extensions import sreg, ax
+
+from models import OpenUser, OAuthStore, User
+import util
+from . import login, authenticate, logout
+
+#import ybrowserauth
+import settings
+
+#
+#  CURL Fetcher is broken
+#
+from openid import fetchers
+fetchers.setDefaultFetcher(fetchers.Urllib2Fetcher())
+
+GENERATED_USERBASE = '!***!'
+
+##
+#
+#
+#
+attrs_dict = {}
+class DetailsForm(forms.Form) :
+    username = forms.RegexField(regex=r'^\w+$',
+                                max_length=30,
+                                widget=forms.TextInput(attrs=attrs_dict),
+                                label=_(u'username'))
+    email = forms.EmailField(widget=forms.TextInput(attrs=dict(attrs_dict, maxlength=75)),
+                                label=_(u'email address'))
+
+    def __init__(self, user, *args, **kwargs) :
+        self._user = user
+        super(DetailsForm, self).__init__(*args, **kwargs)
+
+    def clean_username(self):
+        """
+        Validate that the username is alphanumeric and is not already
+        in use.
+        """
+        if self._user.username == self.cleaned_data['username'] :
+            return self.cleaned_data['username']
+
+        if self.cleaned_data['username'] == '' or self.cleaned_data['username'].find(GENERATED_USERBASE) == 0 :
+            raise forms.ValidationError(_(u'Invalid username'))
+
+        try:
+            user = User.objects.get(username__iexact=self.cleaned_data['username'])
+        except User.DoesNotExist:
+            return self.cleaned_data['username']
+        raise forms.ValidationError(_(u'This username is already taken. Please choose another.'))
+
+#
+# Pinged by facebok when a user adds.
+#
+def facebook_authenticate_add(request) :
+    return HttpResponse('ok')
+
+#
+# Pinged by facebok when a user removes.
+#
+def facebook_authenticate_remove(request) :
+    return HttpResponse('ok')
+
+#
+# OpenID handling
+#
+OPENID_SERVICES = {
+    'google'  : client.GoogleOAuthClient,
+    'yahoo'   : client.YahooOAuthClient,
+    'twitter' : client.TwitterOAuthClient,
+}
+
+def xrds(request) :
+    return_to = request.build_absolute_uri(reverse('openauth_callback', args=[""]))
+
+    xml = ''
+    xml += '<?xml version="1.0" encoding="UTF-8"?>'
+    xml += '<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns:openid="http://openid.net/xmlns/1.0"  xmlns="xri://$xrd*($v*2.0)">'
+    xml += '<XRD>'
+    xml += '<Service>'
+    xml += '<Type>http://specs.openid.net/auth/2.0/return_to</Type>'
+    xml += '<URI>%s</URI>' % return_to
+    xml += '</Service>'
+    xml += '</XRD>'
+    xml += '</xrds:XRDS>'
+
+    return HttpResponse(xml, mimetype="application/xrds+xml")
+
+def open_prompt(request, site=None) :
+    c = consumer.Consumer(request.session, util.OpenIDStore())
+    c.setAssociationPreference([('HMAC-SHA1', 'no-encryption')])
+
+    return_to = request.build_absolute_uri(reverse('openauth_callback', args=[site]))
+
+    print "HERE!!!"
+
+    if site == 'google' :
+        auth_request = c.begin('https://www.google.com/accounts/o8/id')
+
+        auth_request.addExtensionArg('http://openid.net/srv/ax/1.0', 'mode', 'fetch_request')
+        auth_request.addExtensionArg('http://openid.net/srv/ax/1.0', 'required', 'email')
+        auth_request.addExtensionArg('http://openid.net/srv/ax/1.0', 'type.email', 'http://schema.openid.net/contact/email')
+        auth_request.addExtensionArg('http://specs.openid.net/extensions/oauth/1.0', 'consumer', settings.OPENAUTH_DATA[site]['key'])
+        auth_request.addExtensionArg('http://specs.openid.net/extensions/oauth/1.0', 'scope', 'http://www.google.com/m8/feeds http://picasaweb.google.com/data/')
+
+        parts     = list(urlparse.urlparse(return_to))
+        realm     = urlparse.urlunparse(parts[0:2] + [''] * 4)
+
+        url = auth_request.redirectURL(realm, return_to)
+    elif site == 'yahoo' :
+        auth_request = c.begin('http://open.login.yahooapis.com/openid20/www.yahoo.com/xrds')
+        auth_request.message.namespaces.addAlias('http://specs.openid.net/extensions/oauth/1.0', 'oauth')
+        auth_request.message.setArg(openid.message.OPENID2_NS, 'identity', 'http://specs.openid.net/auth/2.0/identifier_select')
+
+        auth_request.addExtensionArg('http://specs.openid.net/extensions/oauth/1.0', 'consumer', settings.OPENAUTH_DATA[site]['key'])
+        parts     = list(urlparse.urlparse(return_to))
+        realm     = urlparse.urlunparse(parts[0:2] + [''] * 4)
+
+        url = auth_request.redirectURL(realm, return_to)
+    elif site == 'facebook' :
+        return HttpResponse(loader.get_template('openauth/facebook_r.html').render(RequestContext(request, { 
+                                                                            'apikey' : settings.OPENAUTH_DATA[site]['key']
+                                                                        })))
+
+    elif site in OPENID_SERVICES :
+        c      = OPENID_SERVICES[site](settings.OPENAUTH_DATA[site]['key'], settings.OPENAUTH_DATA[site]['secret'])
+        #c     = client.TwitterOAuthClient(settings.OPENAUTH_DATA[site]['key'], settings.OPENAUTH_DATA[site]['secret'])
+        token = c.get_request_token(return_to)
+
+        cache.set('oauth_token_%s' % token['oauth_token'], token['oauth_token_secret'])
+        url = c.get_authorize_url(token['oauth_token'], callback=return_to)
+    else :
+        raise Http404("Unknown OAuth service")
+
+    return HttpResponseRedirect(url)
+
+def open_callback(request, site=None, nexturl='/') :
+    try :
+        doneurl = reverse('registration_complete', args=[site])
+    except :
+        doneurl = '/'
+
+    #
+    #
+    #
+    token         = None
+    didReg        = True
+    identity      = None
+    email         = None
+    auth_response = None
+
+    return_to = request.build_absolute_uri(reverse('openauth_callback', args=[site]))
+    if 'oauth_token' not in request.GET and 'openid.mode' not in request.GET and site != 'facebook' :
+        xml = ''
+        xml += '<?xml version="1.0" encoding="UTF-8"?>'
+        xml += '<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns:openid="http://openid.net/xmlns/1.0"  xmlns="xri://$xrd*($v*2.0)">'
+        xml += '<XRD>'
+        xml += '<Service>'
+        xml += '<Type>http://specs.openid.net/auth/2.0/return_to</Type>'
+        xml += '<URI>%s</URI>' % return_to
+        xml += '</Service>'
+        xml += '</XRD>'
+        xml += '</xrds:XRDS>'
+        return HttpResponse(xml, mimetype="application/xrds+xml")
+        
+    #
+    #
+    #
+    if site == 'facebook' :
+        from facebook import Facebook
+
+        facebook = Facebook(settings.OPENAUTH_DATA[site]['key'], settings.OPENAUTH_DATA[site]['secret'])
+        facebook.check_session(request)
+
+        identity = 'facebook:%s' % facebook.uid
+
+        token = {
+            'oauth_token'        : facebook.auth_token or '',
+            'oauth_token_secret' : facebook.session_key,
+            'expires'            : facebook.session_key_expires,
+        }
+    elif 'oauth_token' in request.GET :
+        #
+        # OAuth Login
+        #
+        if site not in OPENID_SERVICES :
+            return HttpResponse('Invalid site')
+
+        tok = request.GET['oauth_token']
+
+        c = OPENID_SERVICES[site](settings.OPENAUTH_DATA[site]['key'], settings.OPENAUTH_DATA[site]['secret'])
+
+        if 'oauth_verifier' in request.GET :
+            token = c.get_access_token(token=tok, verifier=request.GET['oauth_verifier'])
+        else :
+            token = c.get_access_token(token=tok)
+
+        identity = "oauth:%s:%s" % ( site, token['oauth_token'] )
+    else :
+        #
+        #  OpenID Login
+        #
+        if request.GET.get('openid.mode', None) == 'cancel' :
+            tmpl = loader.get_tmplate('openauth/openid_decline.html') 
+            return HttpResponse(tmpl.render({}))
+
+        if request.GET.get('openid.mode', None) != 'id_res' :
+            tmpl = loader.get_template('openauth/openid_decline.html') 
+            return HttpResponse(tmpl.render({}))
+
+        c = consumer.Consumer(request.session, util.OpenIDStore())
+        c.setAssociationPreference([('HMAC-SHA1', 'no-encryption')])
+
+        return_to = request.build_absolute_uri(reverse('openauth_callback', args=[site]))
+        auth_response = c.complete(request.GET, return_to)
+
+        if isinstance(auth_response, consumer.FailureResponse) :
+            print auth_response
+            tmpl = loader.get_template('openauth/openid_decline.html') 
+            return HttpResponse(tmpl.render({}))
+    
+        identity = auth_response.getSigned(openid.message.OPENID2_NS, 'identity', None)
+
+        em = auth_response.extensionResponse('http://schema.openid.net/contact/email', True)
+        if not em or len(em) == 0 :
+            em = auth_response.extensionResponse('http://openid.net/srv/ax/1.0', True)
+            email = em.get('value.email', None)
+
+    try :
+        oiuser = OpenUser.objects.get(openid=identity, source=site)
+    except OpenUser.DoesNotExist :
+        oiuser = None
+
+    response = None
+    message  = None
+    user     = None
+
+    try :
+        oiuser = OpenUser.objects.get(openid=identity, source='openid')
+    except OpenUser.DoesNotExist :
+        pass
+
+    if oiuser is not None :
+        user = oiuser.user
+        if not user.is_active :
+            message = 'Account for this OpenID Account is Inactive.'
+            user = None
+    else :
+        if email and User.objects.filter(email = email).count() != 0 :
+            tmpl = loader.get_template('openauth/exists.html')
+            ctx = RequestContext(request, {
+                'email' : email,
+            })
+            return HttpResponse(tmpl.render(ctx))
+
+        uid = GENERATED_USERBASE + base64.urlsafe_b64encode(uuid.uuid1().bytes).rstrip('=')
+        if email is None :
+            user = User.objects.create_user(uid, "")
+        else :
+            user = User.objects.create_user(uid, email)
+        user.save()
+
+        oiuser = OpenUser(user=user, openid=identity, source='openid')
+        oiuser.save()
+
+        didReg = True
+
+    if user :
+        otoken = None
+
+        if auth_response :
+            otoken = auth_response.extensionResponse('http://specs.openid.net/extensions/oauth/1.0', True)
+
+        if otoken and len(otoken) != 0 and otoken.has_key('request_token') :
+            #
+            #  Now upgrade to access token...
+            #
+            c   = OPENID_SERVICES[site](settings.OPENAUTH_DATA[site]['key'], settings.OPENAUTH_DATA[site]['secret'])
+            tok = c.get_access_token(otoken['request_token'])
+
+            try :
+                ot = OAuthStore.objects.get(user=user, source=site)
+                ot.token  = tok['oauth_token']
+                ot.secret = tok['oauth_token_secret']
+                ot.save()
+            except OAuthStore.DoesNotExist :
+                ot = OAuthStore.objects.create(user=user, source=site, token = tok['oauth_token'], secret = tok['oauth_token_secret'])
+        elif token :
+            tok = token
+            try :
+                ot = OAuthStore.objects.get(user=user, source=site)
+                ot.token  = tok['oauth_token']
+                ot.secret = tok['oauth_token_secret']
+                ot.save()
+            except OAuthStore.DoesNotExist :
+                ot = OAuthStore.objects.create(user=user, source=site, token = tok['oauth_token'], secret = tok['oauth_token_secret'])
+
+        user = authenticate(user=user)
+        login(request, user)
+        if didReg :
+            return HttpResponseRedirect(doneurl)
+        return HttpResponseRedirect(nexturl)
+    elif not message :
+        message = "Failure"
+
+    return HttpResponse(message)
+
+def open_logout(request, nexturl = '/') :
+    logout(request)
+    return HttpResponseRedirect(nexturl)
+    
+def open_details(request, site=None, nexturl='/') :
+    if request.user.is_anonymous() :
+        raise Http404("Must be logged in")
+
+    if request.method == 'POST' :
+        form = DetailsForm(request.user, {
+            'email'    : request.POST.get('email', request.user.email),
+            'username' : request.POST.get('username', request.user.username),
+        })
+        if form.is_valid() :
+            request.user.username = form.cleaned_data['username']
+            request.user.email = form.cleaned_data['email']
+            request.user.save()
+        else :
+            return HttpResponse(simplejson.dumps({'success':False}), mimetype="application/json")
+    else :
+        return HttpResponse(simplejson.dumps({'success':False}), mimetype="application/json")
+
+    return HttpResponse(simplejson.dumps({'success':True}), mimetype="application/json")
+
+#
+#
+#
+def loadGoogleAB(user) :
+    import gdata.auth
+    import gdata.contacts.service
+    from friends.models import Contact
+
+    try :
+        oauth = OAuthStore.objects.get(user = user, source = 'google')
+        token = oauth.token
+        secret = oauth.secret
+    except OAuthStore.DoesNotExist :
+        token = None
+
+    client = gdata.contacts.service.ContactsService()
+
+    iparam = gdata.auth.OAuthInputParams(gdata.auth.OAuthSignatureMethod.HMAC_SHA1,
+                                   settings.GOOGLE_OAUTH_KEY,
+                                   settings.GOOGLE_OAUTH_SECRET)
+                                   #extra_parameters = { 'token' : token })
+
+    client.SetOAuthInputParameters(gdata.auth.OAuthSignatureMethod.HMAC_SHA1,
+                                   settings.GOOGLE_OAUTH_KEY,
+                                   settings.GOOGLE_OAUTH_SECRET)
+
+    ot = gdata.auth.OAuthToken(token,
+                               secret,
+                               scopes=[client.GetFeedUri()],
+                               oauth_input_params=iparam)
+
+    client.SetOAuthToken(ot)
+
+    otoken = client.FetchOAuthRequestToken()
+
+    feed = client.GetContactsFeed()
+    data = []
+
+    for entry in feed.entry :
+        for em in entry.email :
+            try :
+                c = Contact(user=user, name=entry.title.text, email=em.address, source='google')
+                c.save()
+            except :
+                # Hopefully duplicate key
+                pass

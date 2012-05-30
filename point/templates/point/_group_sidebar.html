@@ -1,0 +1,13 @@
+<div>
+ <div class="box notop">
+  <a href="#!{% url point:create %}" rel="async" class="button">Create a Group</a>
+ </div>
+
+ {% partial "point/_group_bio.html" %}
+
+ {% if not user.is_anonymous %}
+  {% partial "point/_group_list.html" with user.member_set.all as groups %}
+ {% endif %}
+
+ {% partial "point/_group_members.html" %}
+</div>

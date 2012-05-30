@@ -1,0 +1,88 @@
+{% extends "leftbar.html" %}
+{% load i18n %}
+
+{% block body_id %}show_profile{% endblock %}
+{% block page_title %}{{ disp_profile.name }}{% endblock %}
+
+{% block content %}
+
+{% if disp_profile.data.bio %}
+<div class="box greenline">
+ <h3><span>About {{ disp_profile.name }}</span></h3>
+ <div class="cleanhtml boxbody">{{ disp_profile.data.bio|cleanhtml }}</div>
+</div>
+{% endif %}
+
+<div class="box greenline">
+ <h3><span>{{ disp_profile.name }}'s Research Requests</span></h3>
+
+ <table class="question_table">
+  {% for question in disp_profile.user.question_set.all %} 
+   <!-- {% cycle 'even' 'odd' as rc %} -->
+   {% partial "crowd/_question_row.html" with rc as rowclass %}
+  {% endfor %}
+ </table>
+</div>
+
+{% endblock %}
+
+{% block sidebar %}
+<div class="vcard">
+ <div class="boxbody ui-helper-clearfix">
+  <img src="{{ disp_profile.icon64 }}"/>
+  <div class="info">
+   <h2>{{ disp_profile.name }}</h2>
+   <dl class="compact">
+    <dt>{{ disp_profile.gold_count }}</dt><dd>Gold</dd>
+    <dt>{{ disp_profile.silver_count }}</dt><dd>Silver</dd>
+    <dt>{{ disp_profile.bronze_count }}</dt><dd>Bronze</dd>
+   </dl>
+  </div>
+ </div>
+</div>
+
+ {% if disp_profile.user.id != user.id %}
+  <div class="group">
+   <a rel="async" href="#!{% url profile:action_follow userid=disp_profile.user.id %}">Follow</a>
+  </div>
+ {% endif %}
+
+{% if user.is_staff %}
+ <div class="barbox">
+  <h3><span>Staff Tools<span></h3>
+  <div class="boxbody">
+   <ul>
+    <li><a rel="async" href="#!{% url profile:fund userid=disp_profile.user.id %}">Add funding</a></li>
+   </ul>
+
+  <dl class="oneline">
+   <dt>Balance</dt>
+   <dd id="account_balance">${{ disp_profile.balance }}</dd>
+  </dl>
+  </div>
+ </div>
+{% endif %}
+
+ {% if disp_profile.user.follows.count != 0 %}
+  <div class="barbox">
+   <h3>{% trans "Following" %} ({{ disp_profile.user.follows.count }})</h3>
+   <div class="boxbody">
+    {% for u in disp_profile.user.follows.all %}
+     <a href="{{ u.following.profile.get_absolute_url }}"><img src="{{ u.following.profile.icon32 }}" title="{{ u.following.profile.name }}"/></a> 
+    {% endfor %}
+   </div>
+  </div>
+ {% endif %}
+
+ {% if disp_profile.user.followed_by.count != 0 %}
+  <div class="barbox">
+   <h3>{% trans "Followed By" %} ({{ disp_profile.user.followed_by.count }})</h3>
+   <div class="boxbody">
+    {% for uf in disp_profile.user.followed_by.all %}
+     <a href="{{ uf.user.profile.get_absolute_url }}"><img src="{{ uf.user.profile.icon32 }}" title="{{ uf.user.profile.name }}"/></a> 
+    {% endfor %}
+   </div>
+  </div>
+ {% endif %}
+
+{% endblock %}

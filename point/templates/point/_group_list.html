@@ -1,0 +1,11 @@
+<div id="group_list_box" class="box">
+ <h3>Your Groups</h3>
+ <ul id="group_list" class="tabs">
+  {% for mem in groups %}
+   <li id="group-{{ mem.group.id }}" {% if active.id == mem.group.id %}class="active"{% endif %}><a rel="async" href="#!{% url point:read mem.group.id %}">{{ mem.group.title }}
+   <span class="count">{{ mem.new_count }}</span>
+   </a>
+   </li>
+  {% endfor %}
+ </ul>
+</div>

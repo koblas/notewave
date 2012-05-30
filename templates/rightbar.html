@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+
+{% block sidebar_class %}sidebar_right{% endblock %}
+{% block rightbar %}
+<div class="sidebar rightbar">{% block sidebar %}{% endblock %}</div>
+{% endblock %}

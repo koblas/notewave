@@ -1,0 +1,13 @@
+{% extends "email.html" %}
+
+{% block content %}
+{% if post.parent %}
+<h3>{{ member.get_username }} commented on a post:</h3>
+<p><a href="{{ url }}">Read it here</a></p>
+<p>{{ post.html }}</p>
+{% else %}
+<h3>{{ member.get_username }} posted:</h3>
+<p><a href="{{ url }}">Read it here</a></p>
+<p>{{ post.html }}</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,12 @@
+<div id="commentform-{{ post.id }}" class="comment">
+ <img src="{{ member.icon24 }}">
+ <div class="commentbody">
+  <form class="group_comment" method="POST" rel="async" action="{% url point:comment post.id %}">
+   {% csrf_token %}
+   <textarea id="poster" style="width: 98%;" rows="2" name="body"></textarea>
+   <div class="tools">
+    <input type="submit" value="Comment" class="button blue"/>
+   </div>
+  </form>
+ </div>
+</div>

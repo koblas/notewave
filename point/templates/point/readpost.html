@@ -1,0 +1,19 @@
+{% extends "rightbar.html" %}
+
+{% block content %}
+ {% partial "point/_group_feed.html" %}
+{% endblock %}
+
+{% block sidebar %}
+ {% partial "point/_group_sidebar.html" %}
+{% endblock %}
+
+{% block footer_extra %}
+<script>
+$(document).ready(function () {
+    $('#poster').live('focus', function () {
+        $(this).next('.tools').css('display','block');
+    });
+});
+</script>
+{% endblock %}

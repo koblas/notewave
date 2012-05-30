@@ -1,0 +1,27 @@
+{% extends "leftbar.html" %}
+
+{% block body_class %}info{% endblock %}
+{% block page_title %}
+ {% switch page %}
+ {% case 'about' %}About
+ {% case 'credit' %}Credits
+ {% case 'about' %}Terms of Service
+ {% case 'privacy' %}Privacy Policy
+ {% endswitch %}
+{% endblock %}
+
+{% block content %}
+<div class="barbox cleanhtml">
+ {{ body }}
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div>
+ <ul class="tabs">
+  <li class="{% if page == 'about' %}active{% endif %}"><a href="/info/about">About</a></li>
+  <li class="{% if page == 'terms' %}active{% endif %}"><a href="/info/terms">Terms of Service</a></li>
+  <li class="{% if page == 'privacy' %}active{% endif %}"><a href="/info/privacy">Privacy Policy</a></li>
+ </ul>
+</div>
+{% endblock %}

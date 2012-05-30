@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block body_id %}profile_settings_about{% endblock %}
+{% block body_class %}settings nav_sidebar{% endblock %}
+{% block page_title %}{{ disp_profile.name }} Settings{% endblock %}
+
+{% block content %}
+<div class="box">
+ <div class="boxbody">
+ {% if success %}
+  <h1>Your email address is now confirmed</h1>
+ {% else %}
+  <h1>Your email address is now confirmed</h1>
+ {% endif %}
+  <p><a href="/">Visit your home page</a></p>
+ </div>
+</div>
+{% endblock %}

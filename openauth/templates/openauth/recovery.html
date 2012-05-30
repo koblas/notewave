@@ -1,0 +1,29 @@
+{% extends "rightbar.html" %}
+
+{% block page_title %}Sign Up Confirm{% endblock %}
+{% block body_class %}openauth{% endblock %}
+{% block body_id %}signup{% endblock %}
+
+{% block content %}
+<div class="barbox">
+ <h1>Change Lost Password</h1>
+ <div class="boxbody">
+  {% if not id %}
+   <p class="error">Please resend your lost password request</p>
+   <p style="margin-top: 1em"><a class="button" href="{% url openauth:signin %}">Sign in Here</a></p>
+  {% else %}
+  <form method="POST" action="{% url openauth:recover id %}">
+   {% csrf_token %}
+   {{ form.as_div }}
+   <input type="submit" class="button" value="Reset Password">
+  </form>
+  {% endif %}
+ </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}
+
+{% block footer_extra %}
+{% endblock %}

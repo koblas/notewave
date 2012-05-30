@@ -1,0 +1,8 @@
+<div>
+<p>For this group you can be known by any name you want...</p>
+<form rel="async" action="{% url point:editname group.id %}" method="POST">
+ {% csrf_token %}
+ {{ form.as_div }}
+ <input class="button blue" type="submit" value="Change Name"/>
+</form>
+</div>

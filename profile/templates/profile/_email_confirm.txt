@@ -1,0 +1,11 @@
+Thank you for registering this email address with Notewave.com. By registering your home, work, 
+and cell phone email addresses, you will be able to post from anywhere to your groups.
+ 
+For security reasons, we have to confirm that this email address is in fact yours. Don't click confirm 
+if you don't remember adding your email address to notewave.
+ 
+Click here to confirm this email address:
+    {{ url }}
+ 
+Questions? Email us at help@notewave.com and we'll get back to you right away.  Notewave is the place 
+to post everything. Just email us.

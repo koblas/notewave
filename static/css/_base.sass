@@ -1,0 +1,161 @@
+$lightblue   : #dfeaf4
+$darkblue    : #19558d
+$lightgrey   : #9d9d9d
+$darkgrey    : #666666
+
+body
+    background-color: #ffffff
+
+#header .body, #footer .body, #content, #header_nav
+    width: 900px
+    margin: 0 auto
+
+#header
+    position: relative
+    background-color: #505759 
+    min-height: 35px
+    padding-top: 18px
+
+#header_nav
+    .logo
+        float: left
+        font-size: 20px
+        font-weight: lighter
+        color: #fff
+        background-color: $darkblue
+        padding: 5px 20px 5px 20px
+        a
+            text-decoration: none
+            color: #fff
+            &:visited, &:hover, &:active
+                text-decoration: none
+                color: #fff
+    ul  
+        float: right
+        display: inline-block
+        li  
+            margin: 0.8em 0 0.4em 1.2em
+            display: inline-block
+            list-style-type: none
+            a
+                position: relative
+                &:link, &:visited, &:hover, &
+                    color: #b9bbbc
+                font-weight: bold
+                .count
+                    border-bottom: 1px solid #920000
+                    font-size: 0.8em
+                    line-height: 1.2em
+                    margin: 0
+                    padding: 1px 5px
+                    position: absolute
+                    right: -10px
+                    top: -5px
+                &:hover
+                    color: #ffffff
+            .count
+                background: none repeat scroll 0 0 #a82400
+                color: #ffffff
+                -moz-border-radius: 10px
+                -webkit-border-radius: 10px
+
+    form
+        float: right
+        padding-top: 2px
+
+        input#header_search
+            //padding: 0px 0.5em
+            height: 19px
+            padding: 0px 0.5em
+        input.submit
+            height: 27px
+            width: 25px
+            cursor: pointer
+            text-indent: -9999px
+            border: 0 none
+            background: url(/static/images/n/search_btn.png) no-repeat left 2px
+
+#content
+    padding: 10px 0px
+    min-height: 400px
+
+#footer
+    border-top: 1px solid #cccccc
+    padding-top: 1em
+    margin-bottom: 40px
+
+    ul.side:before
+        content: "\2022"
+        padding-right: 1em
+
+    ul
+        padding-left: 0
+        float: left
+        li
+            list-style-type: none
+            display: inline-block
+            margin: 0 1em 0 0 
+            font-weight: bold
+            a:link, a:visited
+                color: #666666
+            a:hover, a:active
+                color: #000000
+
+
+//
+//  Handle the sidebar templates
+//
+body.sidebar_right
+    div.rightbar
+        float: right
+        width: 264px
+        padding-left: 10px
+    #content .body
+        width: 603px
+        margin-right: 288px
+        
+body.sidebar_left
+    div.leftbar
+        float: left
+        width: 264px
+    #content .body
+        width: 603px
+        margin-left: 298px
+
+body.sidebar_twocol
+    div.twocol
+        float: right
+        width: 436px
+        padding-left: 10px
+    #content .body
+        width: 436px
+        margin-right: 461px
+
+//
+//
+//
+.jquery-notify-bar
+    width: 100%
+    position: fixed
+    top: 0
+    left: 0
+    z-index: 32768
+    background-color: #efefef
+    font-size: 18px
+    color: #000
+    text-align: center
+    padding: 20px 0px
+    border-bottom: 1px solid #bbb
+
+    &.error
+        color: #f00
+        background-color: #fdd
+
+    &.success
+        color: #060
+        background-color: #BBFFB6
+
+    .notify-bar-close
+        position: absolute
+        left: 95%
+        font-size: 11px

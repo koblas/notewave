@@ -1,0 +1,38 @@
+{% extends "rightbar.html" %}
+
+{% block content %}
+
+ {% include "point/_promo.html" %}
+
+{% endblock %}
+{% block sidebar %}
+<div class="golden">
+ <h2>Get Started</h2>
+ <p>It's free, easy and fun.</p>
+ <form method="POST" class="labelover" action="{% url openauth:signinup %}">
+  {% csrf_token %}
+
+  <div class="formset">
+   <label for="id_email">Your Email Address</label>
+   <input id="id_email" type="text" class="default_label" name="email" value="">
+  </div>
+  <div class="formset">
+   <label for="id_password">Password</label>
+   <input id="id_password" type="password" class="default_label" name="password" value="">
+  </div>
+  <div>
+   <input type="submit" class="green button" value="Sign In/Up Now!">
+  </div>
+
+  <div class="also">
+   <p>Also, sign in with...</p>
+   <a rel="dialog" href="{% url openauth:pop_prompt site='facebook' %}?next=/">Facebook</a>
+   <a rel="dialog" href="{% url openauth:pop_prompt site='google' %}?next=/">Google</a>
+   <a rel="dialog" href="{% url openauth:pop_prompt site='twitter' %}?next=/">Twitter</a>
+  </div>
+ </form>
+</div>
+{% endblock %}
+
+{% block footer_extra %}
+{% endblock %}

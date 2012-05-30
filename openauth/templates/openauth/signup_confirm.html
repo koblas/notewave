@@ -1,0 +1,51 @@
+{% extends "rightbar.html" %}
+
+{% block page_title %}Sign Up Confirm{% endblock %}
+{% block body_class %}openauth{% endblock %}
+{% block body_id %}signup{% endblock %}
+
+{% block content %}
+<div class="barbox ui-helper-clearfix">
+ <h1><span>Confirm Your Identity</span></h1>
+ <div class="boxbody">
+  <p>To avoid spam and abuse, we are requiring users to verify their identity through one of the following services:</p>
+
+  <div class="network-group ui-helper-clearfix">
+   {% for svc in services %}
+    <div class="network ui-helper-clearfix">
+     <a class="connect" rel="nofollow" onClick="javascript:pageTracker._trackEvent(['Signup', 'Confirm', '{{svc}}Img']);" href="{% url openauth:pop_prompt site=svc %}"><img src="/static/images/btn-{{svc}}.png" alt="{{svc}}" style="margin:5px 15px 5px 5px;" /></a>
+     <a id="{{svc}}_connect" onClick="javascript:pageTracker._trackEvent(['Signup', 'Confirm', '{{svc}}Button']);" href="{% url openauth:pop_prompt site=svc %}" class="connect green button">Connect</a>
+    </div>
+   {% endfor %}
+ </div>
+
+  <div id="continue_block" class="network">
+   {% comment %}
+        <a class="connect button arrow_white " href='%s'>Continue</a>
+   {% endcomment %}
+  </div>
+ </div>
+
+ <div class="notes">
+  <ul class="cleanhtml">
+   <li>We don't see or store these user names and passwords.</li>
+   <li>These credentials authenticate to the Notewave community that you are a real person.</li>
+   <li>You can use these credentials to log in with 1-click.</li>
+  </ul>
+ </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}
+
+{% block footer_extra %}
+<script>
+$(document).ready(function () {
+    $('a.connect').click(function () {
+        window.open($(this).attr('href'),'connect','height=600,width=800,toolbar=no,scrollbars=no');
+        return false;
+    });
+});
+</script>
+{% endblock %}

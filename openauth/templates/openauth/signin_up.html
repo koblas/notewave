@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<table>
+<tr>
+ <td>
+  <h3>Join now</h3>
+  <form method="POST">
+   {% csrf_token %}
+   {{ sign_up.as_div }}
+   <input class="button" type="submit" value="Sign Up"/>
+  </form>
+ </td>
+
+ <td>
+  <h3>Already a Member</h3>
+  <form method="POST">
+   {% csrf_token %}
+   {{ sign_in.as_div }}
+   <input class="button" type="submit" value="Sign In"/>
+  </form>
+ </td>
+</td>
+</table>
+{% endblock %}

@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <body>
+  <script src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php" type="text/javascript"></script> 
+  <script type="text/javascript"> 
+FB.Bootstrap.requireFeatures(["Connect","Api"], function() {
+   {% comment %}
+   FB.Facebook.init("{{ apikey }}", "/openauth/xd_receiver.html",{
+       'ifUserConnected' : window.document.location,
+       'permsToRequestOnConnect' : 'email'
+   });
+   FB.Connect.requireSession(function() { window.opener.auth_complete("facebook"); window.close(); });
+   {% endcomment %}
+
+    function needRedirect() {
+        window.location.href = "http://www.facebook.com/login.php?v=1.0&api_key={{ apikey }}&next=http://dev.notewave.com{% url openauth:pop_callback "facebook" %}&canvas=";
+    }
+
+    function authRedirect() {
+        window.opener.auth_complete("facebook"); 
+        window.close(); 
+    };
+
+    FB.Facebook.init("{{ apikey }}", "/openauth/xd_receiver.html");
+
+    // var api = FB.Facebook.apiClient;
+
+    FB.ensureInit(function() {
+       FB.Connect.ifUserConnected(function() {
+           var uid = FB.Connect.get_loggedInUser();
+
+            if (!uid) {
+                alert('no uid');
+                // authRedirect();
+                return;
+            }
+
+           FB.Facebook.apiClient.users_getInfo(
+               uid,
+               ["name", "pic_square", "email"],
+               function(users, ex) {
+                   /* user the data here */
+               });
+       }, needRedirect);
+    });
+});
+  </script> 
+ </body> 
+</html> 
+

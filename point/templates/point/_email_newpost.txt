@@ -1,0 +1,9 @@
+{% if post.parent %}
+{{ member.get_username }} commented on your post 
+
+Read it here : {{ url }}
+{% else %}
+{{ member.get_username }} made a new post
+
+Read it here : {{ url }}
+{% endif %}

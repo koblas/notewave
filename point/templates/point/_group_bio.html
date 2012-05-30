@@ -1,0 +1,19 @@
+<div id="group_bio" class="box ui-helper-clearfix">
+ {% if member %}
+  <h3>Your Group Bio</h3>
+  <img src="{{ member.icon24 }}"/>
+  <div>
+   <span>{{ member.get_username }}</span>
+   {% comment %}
+   <a title="How you are known" class="ltgrey" rel="async" href="#!{% url point:editname member.group.id %}">edit</a>
+   {% endcomment %}
+  </div>
+ {% else %}
+  <h3>Your Bio</h3>
+  <img src="{{ user.profile.icon24 }}"/>
+  <div>
+   <span>{{ user.profile.username }}</span>
+   <a title="How you are known" class="ltgrey" href="{% url profile:settings %}">edit</a>
+  </div>
+ {% endif %}
+</div>

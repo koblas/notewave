@@ -1,0 +1,51 @@
+{% extends "leftbar.html" %}
+{% load i18n %}
+
+{% block body_id %}profile_settings_network{% endblock %}
+{% block body_class %}settings nav_sidebar{% endblock %}
+{% block page_title %}{{ disp_profile.name }} Settings{% endblock %}
+
+{% block content %}
+<div class="barbox">
+ <h1><span>Social Networks</span></h1>
+
+ {% for message in messages %}
+  <div class="message {{ message.tags }} closeable">{{ message }}</div>
+ {% endfor %}
+
+ <div class="network-group ui-helper-clearfix">
+  {% for svc in services %}
+   <div class="network">
+    <h2>{{ svc }}</h2>
+    {% if svc in connected %}
+     <span>Connected</span>
+    {% else %}
+     <a id="{{svc}}_connect" href="{% url openauth:pop_prompt site=svc %}" class="connect button">Connect</a>
+    {% endif %}
+   </div>
+  {% endfor %}
+ </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+ {% partial "profile/_settings_nav.html" with "networks" as active %}
+{% endblock %}
+
+{% block footer_extra %}
+<script>
+$(document).ready(function () {
+    $('a.connect').click(function () {
+        window.open($(this).attr('href'),'connect','height=600,width=800,toolbar=no,scrollbars=no');
+        return false;
+    });
+});
+
+function auth_complete(service) {
+    // Dialog callback will happen here
+    $.getJSON('{% url profile:connected %}', 'site='+escape(service), function (data) {
+        _do_update(data.actions, null);
+    });
+}
+</script>
+{% endblock %}

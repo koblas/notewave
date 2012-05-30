@@ -1,0 +1,45 @@
+{% extends "rightbar.html" %}
+
+{% block page_title %}Sign In{% endblock %}
+{% block body_class %}openauth{% endblock %}
+{% block body_id %}signin{% endblock %}
+
+{% block content %}
+
+<div class="barbox">
+ <h1>Already have an account?</h1>
+ <div class="xleftgroup">
+  <form method="POST" action="{% url openauth:signinup %}">
+   {% csrf_token %}
+   {{ sign_in.as_div }}
+   <div>
+    <input class="green button" type="submit" value="Sign In"/>
+    <input type="submit" class="button" name="forgot" value="Forgot Password"/>
+   </div>
+  </form>
+ </div>
+</div>
+
+{% endblock %}
+
+{% block sidebar %}
+ <div class="">
+  <h4>Or choose one of the following</h4>
+  <div class="button_group">
+   <a rel="dialog" href="{% url openauth:pop_prompt site="google" %}?next=/"><img src="/static/images/btn-google.png" alt="Google" style="margin:5px 15px 5px 5px;" /></a>
+   <br/>
+   <a rel="dialog" href="{% url openauth:pop_prompt site="linkedin" %}?next=/"><img src="/static/images/btn-linkedin.png" alt="Linkedin" style="margin:5px 15px 5px 5px;" /></a>
+  </div>
+ </div>
+{% endblock %}
+
+{% block footer_extra %}
+<script>
+$(document).ready(function () {
+    $('a.connect').click(function () {
+        window.open($(this).attr('href'),'connect','height=600,width=800,toolbar=no,scrollbars=no');
+        return false;
+    });
+});
+</script>
+{% endblock %}

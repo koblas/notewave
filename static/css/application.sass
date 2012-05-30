@@ -1,0 +1,722 @@
+@import base.sass
+@import form.sass
+@import settings.sass
+
+$lightblue   : #dfeaf4
+$darkblue    : #19558d
+$vlightgrey  : #ededed
+$lightgrey   : #9d9d9d
+$grey        : #c0c0c0
+$darkgrey    : #666666
+
+/** RESET **/
+html, body, div, p, blockquote, h1, h2, h3, dl, dt, dd
+    margin: 0
+    padding: 0
+
+*
+    margin: 0
+    padding: 0
+
+/* By default keep those lists indented */
+ul
+    padding-left: 1em
+
+img
+    border: 0px
+
+//
+// Look and feel styles...
+//
+a
+    &:link, &:active, &:hover, &:visited
+        text-decoration: none
+        color: #3189eb
+    &:hover, &:active
+        // color: #5cabe4
+        color: #3189eb
+        text-decoration: underline
+
+body
+    font-family: Helvetica, Arial, sans-serif
+    font-size: 13px
+    color: #303030
+
+.em
+    font-family: Georgia, Times, serif
+    font-style: italic
+
+.green
+    color: #7ab80b
+
+.grey, a.grey
+    color: #6c6c6c
+
+.ltgrey, a.ltgrey
+    color: $lightgrey
+a.ltgrey:hover
+    color: $darkgrey
+
+p
+    line-height: 1.3em
+
+h1
+    font-size: 1.6em
+    letter-spacing: -1px
+    line-height: 1.2em
+    color: #161f21
+
+dl.oneline
+    font-size: 110%
+    dt, dd
+        display: inline-block
+    dt
+        border-left: 1px solid #dfdfdf
+        padding: 0px 0.5em
+    dt:first-child
+        border-left: 0px solid #dfdfdf
+        padding: 0px 0.5em 0px 0px
+    dd
+        padding: 0 0.5em
+
+dl.compact
+    font-size: 110%
+    dt
+        float: left
+        padding-right: 0.5em
+        color: #6c6c6c
+    dd, dt
+        padding-top: 0.2em
+
+.doublebar
+    height: 1px
+    width: 100%
+    border-top: 3px solid $grey
+    border-bottom: 1px solid $grey
+
+//
+//
+//
+ul.nav
+    list-style-type: none
+    li
+        display: inline-block
+        padding-left: 0px
+        margin-left: 0px
+        margin-right: 1em
+
+    li:after
+        color: #ffffff
+        font-weight: bold
+        margin-left: 1em
+        content: " \0b7"
+
+    li:last-child:after
+        content: ""
+
+//
+//  Button styles
+// 
+a.button, input.button, #content .body form a.button
+    font-size: 1.1em
+    font-weight: bold
+    background: #d8d8d8 url(/static/images/gradient.gif) repeat-x top left
+    border-bottom: 1px solid #999
+    border: 1px solid #bbb
+    -moz-border-radius: 3px
+    -webkit-border-radius: 3px
+    color: #333
+    padding: 3px 10px
+    text-align: center
+    text-shadow: #f0f0f0 0px 1px
+
+    &:hover
+        color: #555
+        text-decoration: none
+        border: 1px solid #666666
+        border-bottom: 1px solid #444444
+
+a.button.blue, input.button.blue, #content .body form a.button.blue
+    background: #19558d url(/static/images/blue_gradient.gif) repeat-x top left
+    border-bottom: 1px solid #062c50
+    border: 1px solid #19558d 
+    color: white
+    text-shadow: #19558d 0px 1px
+
+    &:hover
+        color: #dfeaf4
+        border: 1px solid #000
+
+a.button.green, input.button.green, #content .body form a.button.green
+    background: #c3dd82 url(/static/images/green_gradient.gif) repeat-x top left
+    border-bottom: 1px solid #648517
+    border: 1px solid #8cb332 
+    color: #406a24
+    text-shadow: #d4ed95 0px 1px
+
+    &:hover
+        // color: #dfeaf4
+        border: 1px solid #648517
+        border-bottom: 1px solid #405a04
+
+//
+//
+//
+a.black
+    &:link, &:visited, &:hover, &:active
+        color: #303030
+
+form
+    a.cancel
+        display: inline-block
+        float: right
+        margin-top: 4px
+        padding: 6px 24px 6px 0px
+        background: transparent url(/static/images/n/nav_circle_btn.png) no-repeat right 3px
+
+h1 
+    .right
+        float: right
+        font-size: 80%
+        margin-right: 1em
+        img
+            margin-top: 4px
+
+h3
+    margin-bottom: 3px
+
+a.arrow_right
+    display: inline-block
+    padding: 3px 22px 2px 0px
+    background: transparent url(/static/images/n/nav_circle_btn.png) no-repeat right 0px
+
+a.arrow_blue:after
+    padding-left: 0.3em
+    content: url(/static/images/n/blue_arrow.png)
+
+a.arrow_white:after
+    padding-left: 0.3em
+    content: url(/static/images/n/white_arrow.png)
+
+.plus_icon
+    padding-left: 16px
+    font-size: 90%
+    display: inline-block
+    background: transparent url(/static/images/add_btn.png) no-repeat left 0px
+
+
+#content 
+    padding-top: 24px
+
+    .body
+        .box
+            background: #ffffff
+            border: 2px solid #eeeeee
+            -moz-border-radius: 6px
+            -webkit-border-radius: 6px
+            -webkit-box-shadow: 0 0 8px #f0f0f0
+            -moz-box-shadow: 0 0 8px #f0f0f0
+            margin-bottom: 24px
+            padding: 12px 0
+            h1, h3
+                > span
+                    margin-left: 1em
+                font-size: 125%
+                .steps
+                    float: right
+                    font-size: 80%
+                    font-weight: normal
+                    padding-right: 1em
+        .barbox
+            > h1:after
+                display: block
+                content: " "
+                height: 1px
+                width: 100%
+                border-top: 3px solid $grey
+                border-bottom: 1px solid $grey
+                margin-bottom: 1em
+            
+        .padbox
+            p
+                margin: 1em 2em 0em
+        h1
+            span.right
+                float: right
+                font-size: 70%
+                font-weight: normal
+
+//
+//  Sidebar tab items
+//
+.sidebar
+    ul.tabs
+        padding-left: 0
+        li
+            list-style-type: none
+            margin-left: -10px
+            padding: 0 0 2px
+            font-weight: bold
+            padding: 4px 5px 4px 10px
+            overflow: hidden
+            > a, > span
+                display: block
+                color: #19558d
+                text-decoration: none
+                width: 100%
+                padding: 4px 5px 4px 10px
+                -moz-border-radius: 5px
+                -webkit-border-radius: 5px
+                &:hover
+                    background: #dfeaf4 url(/static/images/tab_arrow_right.gif) no-repeat 0% 50%
+        li.active
+            > a, > span
+                color: #444
+                cursor: default
+                background: #e0e0e0 url(/static/images/tab_arrow_right.gif) no-repeat 0% 50%
+
+.sidebar.rightbar
+    ul.tabs
+        li
+            > a, > span
+                &:hover
+                    background: #dfeaf4 url(/static/images/tab_arrow_right.gif) no-repeat 0% 50%
+        li.active
+            > a, > span
+                background: #e0e0e0 url(/static/images/tab_arrow_right.gif) no-repeat 0% 50%
+.sidebar.leftbar
+    ul.tabs
+        li
+            padding: 4px 25px 4px 10px
+            > a, > span
+                &:hover
+                    background: #dfeaf4 url(/static/images/tab_arrow_left.gif) no-repeat right 50%
+        li.active
+            > a, > span
+                background: #e0e0e0 url(/static/images/tab_arrow_left.gif) no-repeat right 50%
+
+//
+//  Sidebar
+//
+.sidebar
+    .box, .help
+        margin-top: 12px
+        padding: 1em 0
+        border-bottom: 1px dotted $grey
+        &:first-child
+            border-top: 1px dotted $grey
+            margin-top: 0px
+        &.notop
+            border-top: 0px dotted $grey
+        h3
+            color: #333
+            font-size: 1em
+            margin-bottom: 3px
+
+    .grey.box 
+        -moz-border-radius: 6px
+        -webkit-border-radius: 6px
+        border: 1px solid #dfdfdf
+        background-color: #ffffff
+        width: 264px
+
+        h3
+            background-color: #f0f0f0
+            padding: 0.5em 1em 0.5em
+            text-shadow: 0 1px 1px rgba(0,0,0,0.3)
+            color: #303030
+        .boxbody
+            padding: 0.5em
+
+        //ul
+            padding-right: 1em
+            margin-bottom: 12px
+            li
+                padding-top: 0.7em
+                line-height: 1.1em
+                margin-left: 1.7em
+
+    .barbox:first-child
+        margin-top: 0px
+
+    .barbox
+        margin-top: 24px
+        border-top: 1px solid #dfdfdf
+        border-bottom: 1px solid #dfdfdf
+        h3
+            background-color: #f0f0f0
+            border-bottom: 1px solid #dfdfdf
+            padding: 0.5em 1em 0.5em
+            text-shadow: 0 1px 1px rgba(0,0,0,0.3)
+            color: #303030
+        .boxbody
+            padding: 0.5em
+
+    .group
+        margin-top: 24px
+
+    .vcard
+        > h3
+            font-size: 90%
+            font-color: #303030
+        background-color: #f4f4f4
+        .boxbody
+            padding: 12px 0px
+        border-top: 1px solid #dfdfdf
+        border-bottom: 1px solid #dfdfdf
+
+        img
+            float: left
+            margin-left: 6px
+        .info
+            margin-left: 80px
+            h2
+                padding-bottom: 0.2em
+            div
+                border-top: 1px dashed #dfdfdf
+                padding-top: 0.2em
+
+.cyclecolor
+    .odd
+        background-color: #ffffff
+
+    .even
+        background-color: #ededed
+ul.nobullet
+    list-style-type: none
+
+ul.tagcloud
+    li
+        display: inline-block
+        padding: 0.2em
+
+.cleanhtml
+    ul
+        margin-top: 1em
+    li
+        margin-left: 2em
+        padding-left: 0.1em
+
+    p:first-child
+        padding-top: 0px
+    p
+        padding-top: 8px
+
+
+.boxbody
+    padding: 0em 1em
+
+//  Notifier on top of a form to indicate success.
+.message.success, .message.error
+    position: relative
+    padding: 1.5em
+    font-size: 120%
+    background-color: #e6f8dd
+
+.close-icon
+    position: absolute
+    top: 0.5em
+    right: 0.5em
+    font-size: 8px
+    padding: 2px
+    border: 1px solid #303030
+    background-color: #efefef
+    cursor: pointer
+    &:hover
+        background-color: #666666
+        color: #fff
+
+.message.error
+    background-color: #fdd
+
+
+table.grided
+    padding: 0px 12px
+    width: 100%
+    border-collapse: collapse
+    margin-bottom: 12px
+    border-top: 3px solid #e2e2e2
+    border-bottom: 3px solid #e2e2e2
+
+    tr
+        border: 1px solid #e2e2e2
+    th, td
+        padding: 0.3em 1em
+        vertical-align: top
+    th:first-child, td:first-child
+        padding: 0.3em 1em
+        border-right: 1px solid #e2e2e2
+    th
+        font-size: 110%
+        text-align: left
+        background-color: #f5f5f5
+        color: #999999
+
+.paginator
+    margin-top: 24px
+    text-align: center
+    a
+        border: 1px solid #cfcfcf
+        padding: 1px
+        display: inline-block
+        span
+            height: 18px
+            font-size: 110%
+            display: inline-block
+            padding: 2px 0.5em 0px
+            font-weight: bold
+            background: transparent url(/static/images/small_green_gradient.png) repeat-x 
+            color: #ffffff
+            
+
+    a.active
+        span
+            background: transparent url(/static/images/small_grey_gradient.png) repeat-x 
+            color: #79b809
+
+//  Grey text in boxes.
+input.default_text, textarea.default_text
+    color: #8c8c8c
+
+.tip_right #tiptip_content
+    font-size: 110%
+
+.formtip
+    font-size: 100%
+    padding: 8px
+    background-color: #F4F4F4
+    //border: 1px solid #dfdfdf
+    border: 1px solid #8fbe3a
+    width: 250px
+    -moz-border-radius: 4px
+    -webkit-border-radius: 4px
+
+#header .body, #footer .body, #content, #header_nav
+    width: 900px
+    margin: 0 auto
+
+.quick
+    padding-top: 30px
+
+    .number
+        float: left
+        font-size: 50px
+        font-weight: bold
+        color: $darkgrey
+        
+    .pull
+        margin-top: 3px
+        margin-left: 70px
+        h3
+            font-size: 30px
+            color: $darkblue
+        p
+            font-size: 14px
+            color: $darkgrey
+
+#group_bio
+    img
+        float: left
+    div
+        margin-left: 30px
+
+.roundblue
+    display: inline-block
+    -moz-border-radius: 3px
+    -webkit-border-radius: 3px
+    color: #19558d
+    padding: 0.1em 0.4em
+    background-color: $lightblue
+    &:link, &:visited
+        text-decoration: none
+    &:hover
+        color: white
+        background-color: #19558d
+
+//
+//
+//
+.feed
+    margin-top: 1em
+    
+    .item:first-child
+        border-top: 0px dotted $grey
+    .item
+        border-top: 1px dotted $grey
+        padding: 1em 0em
+        min-height: 50px
+
+        .pic
+            float: left
+            img
+                width: 50px
+                height: 50px
+
+        .postbody
+            margin-left: 70px
+            .group
+                margin-right: 1em
+                display: inline-block
+                float: left
+            .author
+                display: inline-block
+                font-weight: bold
+            .date
+                float: right
+                color: $lightgrey
+            .cbody
+                margin-top: 4px
+                line-height: 1.2em
+                font-size: 1.2em
+                padding: 0.2em 0
+            .tools
+                padding-left: 1em
+                a
+                    display: inline-block
+                    color: $darkblue
+        .comments
+            .comment
+                width: 90%
+                margin-bottom: 1px
+                background-color: #dedede
+                padding: 3px
+                img
+                    float: left
+                    display: block
+                .commentbody
+                    min-height: 30px
+                    margin-left: 30px
+                    .date
+                        font-size: 80%
+                        float: none
+                        color: $lightgrey
+                    textarea
+                        font-size: 90% !important
+
+    .more
+        clear: both
+        // padding: 1em 0
+        margin-left: 70px
+        a
+            display: inline-block
+            width: 90%
+
+.group_members
+    padding: 0.5em 0
+
+.group_post, .group_comment
+    .tools
+        padding: 0px !important
+        width: 100%
+        
+        .left
+            float: left
+            padding-top: 8px
+            color: $lightgrey
+            font-weight: bold
+        .right
+            text-align: right
+
+#group_list
+    span.count
+        display: inline-block
+        float: right
+        margin-right: 20px
+        padding: 0px 4px
+        background: none repeat scroll 0 0 #a82400
+        color: #ffffff
+        -moz-border-radius: 10px
+        -webkit-border-radius: 10px
+
+#group_settings
+    border-bottom: 3px solid $grey
+    margin-bottom: 1em
+    padding-bottom: 1em
+    .line:first-child
+        border-top: 0px dotted $grey
+    .line
+        border-top: 1px dotted $grey
+        padding: 0.5em 0
+        font-size: 110%
+        .title
+            float: left
+            font-weight: bold
+            padding-right: 2em
+        .rest
+            display: block
+            .action
+                float: right
+
+
+.golden
+    background-color: $lightblue
+    padding: 18px
+    border: 1px solid $grey
+    -moz-border-radius: 3px
+    -webkit-border-radius: 3px
+    -webkit-box-shadow: rgba(0, 0, 0, 0.199219) 0px 0px 10px
+    h2
+        font-size: 36px
+        font-weight: bold
+        text-align: center
+    p
+        font-size: 11px
+        margin-top: 10px
+        text-align: center
+
+form.labelover
+    .formset
+        position: relative
+
+        label
+            display: block
+            font-size: 120%
+            margin-left: 0.5em
+            color: $darkgrey
+            font-weight: normal !important
+            position: absolute
+
+.notes
+    margin-top: 4em
+    line-height: 1.4em
+    background-color: $vlightgrey
+
+    ul
+        padding: 1em 0
+
+    &:before
+        display: block
+        padding: 0
+        border-top: 1px dotted $darkgrey
+        content: "\0a0"
+        height: 2px
+        margin-top: 1px
+        background-color: #ffffff
+    &:after
+        background-color: #ffffff
+        display: block
+        padding: 0
+        content: "\0a0"
+        height: 2px
+        border-bottom: 1px dotted $darkgrey
+        margin-top: 2px
+
+.network
+    padding-left: 24px
+    padding-top: 12px
+    img
+        float: left
+    .button
+        display: inline-block
+        margin-top: 18px
+    span
+        display: inline-block
+        margin-top: 24px
+        margin-left: 8px
+        font-weight: bold
+
+.bordered
+    border: 1px solid $grey
+    
+.center
+    text-align: center

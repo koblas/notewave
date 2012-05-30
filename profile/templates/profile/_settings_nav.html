@@ -1,0 +1,14 @@
+<div class="box">
+<h3>Settings</h3>
+<ul class="tabs"> 
+<li class="{% if active == 'about' %}active{% endif %}"><a href="{% url profile:settings %}">About You</a></li> 
+<li class="{% if active == 'photo' %}active{% endif %}"><a href="{% url profile:settings_photo %}">Your Picture</a></li> 
+<li class="{% if active == 'password' %}active{% endif %}"><a href="{% url profile:settings_password %}">Your Password</a></li> 
+<li class="{% if active == 'networks' %}active{% endif %}"><a href="{% url profile:settings_networks %}">Social Networks</a></li> 
+<li class="{% if active == 'notify' %}active{% endif %}"><a href="{% url profile:settings_notification %}">Notifications</a></li> 
+<li class="{% if active == 'email' %}active{% endif %}"><a href="{% url profile:settings_email %}">Email Settings</a></li> 
+{% comment %}
+<li><a class="{% if active == 'about' %}active{% endif %} href="/profile/edit/password">Password</a></li> 
+{% endcomment %}
+</ul>
+</div>

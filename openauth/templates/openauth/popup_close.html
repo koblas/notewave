@@ -1,0 +1,10 @@
+<script>
+if (window.opener && window.opener.auth_complete) {
+    {% if error %}
+        window.opener.auth_complete("{{ service }}", "{{ error }}");
+    {% else %}
+        window.opener.auth_complete("{{ service }}");
+    {% endif %}
+}
+window.close();
+</script>

@@ -1,0 +1,57 @@
+from django.conf.urls.defaults import *
+from django.views.generic.simple import direct_to_template
+from django.core.urlresolvers import reverse
+
+# Uncomment the next two lines to enable the admin:
+# from django.contrib import admin
+# admin.autodiscover()
+
+urlpatterns = patterns('openauth.views',
+    #
+    #  Used by Facebook
+    #
+    #(r'facebook',            'facebook_authenticate', {}),
+    #(r'facebook_authadd',    'facebook_authenticate_add', {}),
+    #(r'facebook_authremove', 'facebook_authenticate_remove', {}),
+    (r'xd_receiver.html', direct_to_template, { 'template' : 'openauth/xd_receiver.html' }),
+
+    #
+    #  Flickr...
+    #
+    #(r'flickr_r',     'flickr_prompt', {}),
+    #(r'flickr_cb',    'flickr_callback', {}),
+
+    #
+    #  OpenID centralization.
+    #
+    url(r'xrds', 'xrds', name='openauth_xrds'),
+    url(r'r/(?P<site>.+)', 'open_prompt', name='openauth_prompt'),
+    url(r'cb/(?P<site>.*)', 'open_callback', name='openauth_callback'),
+    url(r'details', 'open_details', name='openauth_details'),
+    url(r'logout', 'open_logout', name='openauth_logout'),
+
+    # 
+    #  Used by google (OpenID)
+    #
+    #url(r'openid_google_cb', 'openid_callback', {'site':'google'}, name='oauth_google_callback'),
+    #(r'openid_google_r',  'openid_view', {'site':'google' }),
+    
+    #
+    #
+    #
+    #url(r'openid_yahoo_cb', 'oauth_callback', {'site':'yahoo'}, name='oauth_yahoo_callback'),
+    #(r'openid_yahoo_r',  'oauth_prompt', {'site':'yahoo' }),
+
+    # 
+    #  Used by yahoo
+    #
+    #(r'yahoo_cb', 'yahoo_callback', {'site':'yahoo', 'regdone' : 'yahoo_complete' }),
+    #(r'yahoo_r',  'yahoo_view', {'site':'yahoo' }),
+
+    #
+    #  Unused...
+    #
+    #(r'opensocial',                'google_authenticate'),
+    #url(r'oauth_(?P<site>.+)_p',   'oauth_prompt', name='oauth_prompt'),
+    #url(r'oauth_(?P<site>.+)_cb',  'oauth_callback', name='oauth_callback'),
+)

@@ -1,0 +1,55 @@
+<div class="barbox">
+ <h1>{{ group.title }} 
+  <span class="right">
+   {% if group.email %}<a href="mailto:{{group.email}}">{{ group.email }}</a>{% endif %}
+   {% comment %}
+   <a rel="async" href="#!{% url point:groupsettings group.id %}"><img src="/static/images/gear_new.png" width="18" height="18"/></a>
+   {% endcomment %}
+   <a rel="toggle" title="Group Settings" href="#group_settings"><img src="/static/images/gear_new.png" width="18" height="18"/></a>
+  </span>
+ </h1>
+
+ {% include "point/_group_settings.html" %}
+
+ <form class="group_post labelover" method="POST" enctype="multipart/form-data" action="{% url point:post group.id %}" rel="async">
+  {% csrf_token %}
+  <div class="formset">
+   <label for="poster">What's on your mind?</label>
+   <textarea id="poster" class="default_label" style="width: 99%;" rows="1" name="body">{{form.body}}</textarea>
+  </div>
+  <div class="tools" {% if not form.body %}style="display:none"{% endif %}>
+   <div class="left">
+    Attach: <a href="#photo_upload" rel="toggle">Photo</a>
+   </div>
+   <div class="right">
+    <input type="submit" alt="Posting..." value="Post" class="button blue"/>
+   </div>
+  </div>
+  <div class="bordered center cleanhtml" id="photo_upload" style="display:none">
+   <p><strong>Select an image file on your computer.</strong></p>
+
+   <p><input type="file" id="file" name="attachment"/></p>
+   {% if group.email %}
+    <p><a href="mailto:{{ group.email }}">Or upload via email</a></p>
+   {% endif %}
+  </div>
+ </form>
+
+ <div id="feed-{{ group.id }}" class="feed">
+  {% if post %}
+   {% partial "point/_post_line.html" %}
+  {% else %}
+   {% for post in posts %}
+    {% partial "point/_post_line.html" %}
+   {% empty %}
+    <h3>Nobody has posted anything yet, be the first!</h3>
+   {% endfor %}
+  {% endif %}
+ </div>
+ {% if has_more %}
+ <div class="feed">
+  <div class="more"><a rel="async" id="more_button" href="#!{% url point:more group.id posts|length %}" class="button">More</a></div>
+ </div>
+ {% endif %}
+
+</div>

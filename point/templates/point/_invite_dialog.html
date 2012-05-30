@@ -1,0 +1,8 @@
+<div>
+
+<form rel="async" action="{% url point:invite group.id %}" method="POST">
+ {% csrf_token %}
+ {{ form.as_div }}
+ <input type="submit" class="blue button" value="Invite"/>
+</form>
+</div>

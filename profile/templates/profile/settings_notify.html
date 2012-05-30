@@ -1,0 +1,32 @@
+{% extends "leftbar.html" %}
+{% load i18n %}
+
+{% block body_id %}profile_settings_about{% endblock %}
+{% block body_class %}settings nav_sidebar{% endblock %}
+{% block page_title %}{{ disp_profile.name }} Settings{% endblock %}
+
+{% block content %}
+<div class="barbox">
+ <h1><span>Notification Settings</span></h1>
+
+ {% for message in messages %}
+  <div class="message {{ message.tags }} closeable">{{ message }}</div>
+ {% endfor %}
+
+ <div class="boxbody">
+  <form method="POST" action="{% url profile:settings_email %}">
+   {{ form.as_div }}
+   <pre>
+    * Your current email address
+    * Other non-verified email addresses
+    * notification settings for email
+   </pre>
+   <div><input class="blue button" type="submit" value="Save Settings"/> </div>
+  </form>
+ </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+ {% partial "profile/_settings_nav.html" with "notify" as active %}
+{% endblock %}

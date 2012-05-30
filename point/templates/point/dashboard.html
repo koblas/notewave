@@ -1,0 +1,56 @@
+{% extends "rightbar.html" %}
+
+{% block content %}
+
+<div class="barbox">
+ <h1>Recent activity</h1>
+
+ {% if user.member_set.count == 0 %}
+  {% include "point/_promo.html" %}
+ {% endif %}
+
+ <div class="feed">
+  {% for post in posts %}
+   {% partial "point/_post_line.html" %}
+  {% endfor %}
+ </div>
+</div>
+
+{% endblock %}
+
+{% block sidebar %}
+ {% if active %}
+  {% partial "point/_group_sidebar.html" %}
+ {% else %}
+ <div class="box notop">
+  <a href="#!{% url point:create %}" rel="async" class="button">Create a Group</a>
+ </div>
+
+ {% partial "point/_group_bio.html" %}
+
+ {% partial "point/_group_list.html" with user.member_set.all as groups %}
+
+ {% endif %}
+{% endblock %}
+
+{% block footer_extra %}
+<script>
+{% include "point/longpoll.js" %}
+
+$(document).ready(function () {
+    $('#poster').live('focus', function () {
+        var form = $(this).closest('form');
+        $('.tools', form).css('display','block');
+    });
+
+    $.get("{% url point:chat_avail %}");
+
+    longPoll();
+});
+
+//if we can, notify the server that we're going away.
+$(window).unload(function () {
+    $.get("{% url point:chat_depart %}");
+});
+</script>
+{% endblock %}

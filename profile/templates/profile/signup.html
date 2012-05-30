@@ -1,0 +1,24 @@
+{% extends "rightbar.html" %}
+{% load i18n %}
+
+{% block body_id %}profile_settings_about{% endblock %}
+{% block body_class %}settings nav_sidebar{% endblock %}
+{% block page_title %}{{ disp_profile.name }} Settings{% endblock %}
+
+{% block content %}
+<div class="box greenline">
+<h3><span>Public Profile</span></h3>
+  {% for message in messages %}
+   <div class="message {{ message.tags }} closeable">{{ message }}</div>
+  {% endfor %}
+<form method="POST" action="{% url profile:signup %}" class="boxbody">
+{% csrf_token %}
+
+{{ form.as_div }}
+ <div><input class="blue button" type="submit" value="Create Profile"/> <a href="/" class="cancel">Skip</a></div>
+</form>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script type="text/javascript" src="/static/js/jquery.comet.js"></script> 
+<script>
+function receiver(message) {
+    console.log(message);
+}
+
+$(document).ready(function () {
+    var username = 'foouser';
+
+    $.comet.init('/cometd/');
+
+    $.comet.startBatch();
+    $.comet.subscribe('/chat/demo', receiver);
+    $.comet.publish('/chat/demo', {
+        user: username,
+        join: true,
+        chat: username + ' has joined'
+    });
+    $.comet.endBatch();
+
+});
+</script>
+
+{% endblock %}

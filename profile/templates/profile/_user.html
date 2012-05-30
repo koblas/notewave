@@ -1,0 +1,14 @@
+{% load i18n %}
+
+<li class="item ui-helper-clearfix">
+ <div class="summary">
+  <h3><a href="{{ profile.get_absolute_url }}">{{ profile.username }}</a></h3>
+  <div class="owner-data">
+   <strong>
+    {% blocktrans with profile.user.date_joined|timesince as since %}
+     joined about {{ since }} ago
+    {% endblocktrans %}
+   </strong>
+  </div>
+ </div> 
+</li>

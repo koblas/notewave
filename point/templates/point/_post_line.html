@@ -1,0 +1,48 @@
+<div id="post-{{ post.id }}" class="item">
+ <div class="pic">
+  <img src="{{ post.member.icon50 }}"/>
+ </div>
+ <div id="post-{{ post.id }}" class="postbody">
+  <div>
+   {% if not active %}
+    <div class="group"><a class="roundblue" rel="async" href="#!{% url point:read post.group.id %}">{{ post.group.title }}</a></div>
+   {% endif %}
+   <div class="date">{{ post.created_at|timesince }} ago</div>
+   <div class="author">{{ post.member.get_username }}</div>
+  </div>
+  <div class="cbody">
+   {{ post.html }}
+
+   {% for youtube in post.links_youtube %}
+    <div style="margin-top:10px;margin-bottom:10px">
+     <object width="490" height="247">
+      <param name="movie" value="http://www.youtube.com/v/{{ youtube }} &amp;hl=en_US&amp;fs=1&amp;rel=0&amp;autoplay=0">
+      <param name="allowFullScreen" value="true">
+      <param name="allowscriptaccess" value="always">
+      <embed src="http://www.youtube.com/v/{{ youtube }}&amp;hl=en_US&amp;fs=1&amp;rel=0&amp;autoplay=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="490" height="247">
+      </object>
+     </div>
+    {% endfor %}
+
+    {% if post.images %}
+     <div class="photos">
+      {% for img in post.images %}
+       <img src="{{ img.icon100 }}"/>
+      {% endfor %}
+     </div>
+    {% endif %}
+
+  </div>
+  <div class="tools">
+   <a rel="async" href="#!{% url point:like post.id %}">Like</a>
+   <a rel="async" href="#!{% url point:comment post.id %}">Comment</a>
+  </div>
+  {% if 1 %}
+   <div class="comments">
+    {% for comment in post.comments %}
+     {% partial "point/_post_comment_line.html" %}
+    {% endfor %}
+   </div>
+  {% endif %}
+ </div>
+</div>

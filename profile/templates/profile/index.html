@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block pagetitle %}{% trans "all users" %} ({{profiles.count}}){% endblock %}
+
+{% block content %}
+
+<ul class="items" id="users">
+ {% for profile in profiles %}
+  {% include "profile/_user.html" %}
+ {% endfor %}
+</ul>
+
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}

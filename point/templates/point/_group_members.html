@@ -1,0 +1,14 @@
+<div class="box">
+ <h3>Group Members</h3>
+
+ <div class="group_members ui-helper-clearfix">
+  {% for member in active.member_set.all %}
+   <a href="#"><img width="24" height="24" src="{{ member.icon24 }}" title="{{ member.get_username }}"></a>
+  {% endfor %}
+ </div>
+
+ <div style="clear: both" class="">
+  <a href="#!{% url point:invite active.id %}" rel="async" class="button green">Invite</a>
+  <a href="#!{% url point:shareinvite active.id %}" rel="async" class="button">Share URL</a>
+ </div>
+</div>

@@ -1,0 +1,11 @@
+{% load i18n %}
+
+<div class="profile_badge ui-helper-clearfix">
+ <div class="avatar">
+  <img src="{{ profile.icon32 }}"/>
+ </div>
+ <div class="info">
+  <a href="{{ profile.get_absolute_url }}">{{ profile.name }}</a>
+  <span title="{% trans "User Reputation" %}" class="reputation">({{ profile.reputation }})</span>
+ </div>
+</div>

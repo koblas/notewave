@@ -1,0 +1,21 @@
+{% extends "rightbar.html" %}
+
+{% block content %}
+<div class="barbox">
+ <h1>Accept Invitation</h1>
+
+ <p>You've been invited to the group <strong>{{ group.title }}</strong></p>
+
+ <form method="POST" action="{% url point:accepturl group.invite_id %}">
+  {% csrf_token %}
+  {% if user.is_anonymous %}
+   <p>Please either enter your existing email and password, or start here by creating an account</p>
+   {{ form.as_div }}
+  {% endif %}
+  <input type="submit" class="green button" value="Accept Invitation"/>
+ </form>
+</div>
+{% endblock %}
+
+{% block footer_extra %}
+{% endblock %}

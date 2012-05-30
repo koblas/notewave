@@ -1,0 +1,11 @@
+<div id="group_settings" {% if not visible %}style="display:none"{% endif %}>
+ <form>
+  <div class="line">
+   <div class="title">Notify on every post:</div>
+   <div class="rest">
+    <span class="green"><strong>{% if member.notify_on_post %}On{% else %}Off{% endif %}</strong></span>
+    <div class="action"><a rel="async" href="#!{% url point:groupsettings group.id %}?notify=1" class="button">Notify {% if member.notify_on_post %}Off{% else %}On{% endif %}</a></div>
+   </div>
+  </div>
+ </form>
+</div>

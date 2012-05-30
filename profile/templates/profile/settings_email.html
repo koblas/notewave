@@ -1,0 +1,53 @@
+{% extends "leftbar.html" %}
+{% load i18n %}
+
+{% block body_id %}profile_settings_about{% endblock %}
+{% block body_class %}settings nav_sidebar{% endblock %}
+{% block page_title %}{{ disp_profile.name }} Settings{% endblock %}
+
+{% block content %}
+<div class="barbox">
+ <h1><span>Email Addresses</span></h1>
+
+  {% for message in messages %}
+   <div class="message {{ message.tags }} closeable">{{ message }}</div>
+  {% endfor %}
+
+ <div class="boxbody">
+  <form method="POST" action="{% url profile:settings_email %}">
+   <h4>Add an email address:</h4>
+   <p>Adding an email address is useful if you expect to be invited to connect at more than one address.  
+      <strong>We recommend that you add both a personal and work email address.</strong></p>
+   {% csrf_token %}
+   {{ email_form.as_div }}
+   <div><input class="blue button" type="submit" value="Add email address"/> </div>
+  </form>
+ 
+  <form method="POST" action="{% url profile:settings_email %}">
+   {% csrf_token %}
+   <h4>Current Email Addresses:</h4>
+
+   <p>Choose a primary email address that you would like all messages sent to:</p>
+   <table class="email_list">
+    {% for obj in email_list %}
+    <tr>
+     <td><input type="radio" name="addr" value="{{ obj.email }}"/></td>
+     <td>{{ obj.email }}</td>
+     <td>{% if obj.is_primary %}Primary Address{% endif %}</td>
+     <td class="status">{% if obj.is_confirmed %}Confirmed{% else %}Unconfirmed{% endif %}</td>
+    </tr>
+    {% endfor %}
+   </table>
+   <div>
+    <input class="button" type="submit" name="op_save"   value="Make Primary"/> 
+    <input class="button" type="submit" name="op_delete" value="Remove"/> 
+    <input class="button" type="submit" name="op_resend" value="Resend Confirmation"/> 
+   </div>
+  </form>
+ </div>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+ {% partial "profile/_settings_nav.html" with "email" as active %}
+{% endblock %}

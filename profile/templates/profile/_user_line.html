@@ -1,0 +1,6 @@
+{% load i18n %}
+
+<span class="profile_info">
+ <a href="{{ profile.get_absolute_url }}">{{ profile.name }}</a>
+ <span title="{% trans "User Reputation" %}" class="reputation">({{ profile.reputation }})</span>
+</span>

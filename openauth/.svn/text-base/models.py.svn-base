@@ -1,0 +1,85 @@
+import settings
+from django.db import models
+from django.core.cache import cache
+from django.contrib.auth.models import User
+
+#  OpenID or Facebook user store
+#
+class OpenUser(models.Model) :
+    """OpenSocial user"""
+    class Meta :
+        unique_together = (('openid', 'source'),)
+
+    openid  = models.CharField(max_length=100)
+    source  = models.CharField(max_length=10)
+    user    = models.ForeignKey(User, db_index=True)
+
+    def __str__(self) :
+        return "<OpenUser %s - %s>" % (self.source, self.openid)
+
+    def get_service(self) :
+        p = self.openid.split(':')
+        if len(p) == 2 :
+            return (p[0], None, p[1])
+        return p
+
+class OAuthStoreOpener(object) :
+    def __init__(self, client) :    
+        self.client = client
+
+    def open(self, url, args = None, method = None) :   
+        from StringIO import StringIO
+    
+        if args and len(args) != 0 and isinstance(args, basestring) :
+            nargs = {}
+            for arg in args.split('&') :
+                (k,v) = arg.split('=',2)
+                nargs[k] = v
+            args = nargs
+
+        return StringIO(self.client.oauth_request(url, args, method))
+
+class OAuthStore(models.Model) :
+    """Store the OAuth tokens we get from different services for a user
+    """
+    class Meta :
+        unique_together = (('user', 'source'),)
+
+    token   = models.CharField(max_length=1024)
+    secret  = models.CharField(max_length=1024, null=True)
+    expires = models.DateTimeField(null=True, blank=True)
+
+    source  = models.CharField(max_length=100)
+    user    = models.ForeignKey(User, db_index=True)
+
+    def get_opener(self, consumer_key, consumer_secret) :
+        from oauth.client import CommonOAuthClient
+
+        client = CommonOAuthClient(consumer_key, consumer_secret, self.token, self.secret)
+
+        return OAuthStoreOpener(client)
+
+    def __str__(self) :
+        return "<OAuthStore token=%s secret=%d chars>" % (self.token, len(self.secret))
+
+# 
+#  OpenID classes
+#
+class OpenidNonce(models.Model):
+    server_url = models.TextField(max_length=2047)
+    salt       = models.CharField(max_length=40)
+    expires    = models.IntegerField()
+
+    def __str__(self):
+        return "Nonce: %s" % self.nonce
+
+class OpenidAssociation(models.Model):
+    server_url = models.TextField(max_length=2047)
+    handle     = models.CharField(max_length=255)
+    secret     = models.TextField(max_length=255) # Stored base64 encoded
+    issued     = models.IntegerField()
+    lifetime   = models.IntegerField()
+    assoc_type = models.TextField(max_length=64)
+
+    def __str__(self):
+        return "Association: %s, %s" % (self.server_url, self.handle)

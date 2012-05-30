@@ -1,0 +1,48 @@
+{% extends "rightbar.html" %}
+
+{% block page_title %}Sign Up{% endblock %}
+{% block body_class %}openauth{% endblock %}
+{% block body_id %}signup{% endblock %}
+
+{% block content %}
+<div class="box greenline ui-helper-clearfix">
+ <h1><span>Sign Up</span>
+     <span class="right"><a class="" href="{% url openauth:signin %}">Already have an account</a></span></h1>
+  <form method="POST">
+   {% csrf_token %}
+   {{ sign_up.username|divfield }}
+   {{ sign_up.email|divfield }}
+   {{ sign_up.password|divfield }}
+   <div class="toolbar">
+    <div class="bg">
+     <input type="checkbox" name="terms" id="id_terms">
+     I agree to the <a href="/info/terms">Terms of Service</a> and <a href="/info/privacy">Privacy Policy</a>
+    </div>
+   </div>
+   <div>
+    <input class="button" type="submit" value="Continue"/>
+   </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block footer_extra %}
+<script>
+$(document).ready(function() {
+    $('#id_username').focus();
+});
+</script>
+<div style="display: none;">
+ <div class="formtip" rel="formtip" for="#id_username">Your username is the only information publicly displayed.</div>
+ <div class="formtip" rel="formtip" for="#id_email">
+  <ul>
+   <li>Your email address will not be publicly displayed.</li>
+   <li>We will send service related messages to this address.</li>
+   <li>No spam, no sharing of your email address.</li>
+  </ul>
+ </div>
+ <div class="formtip" rel="formtip" for="#id_password">
+  Minimum of 8 characters.
+ </div>
+</div>
+{% endblock %}

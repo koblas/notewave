@@ -1,0 +1,34 @@
+<div class="signin_dialog">
+ <div class="leftgroup">
+  <h2 style="text-align: center; padding-top: 24px">New to IQVine?</h2>
+  <p style="padding-top: 12px">
+   Get started in 30 seconds.
+  </p>
+  <div style="text-align: center; padding-top: 24px">
+   <a class="button" href="{% url openauth:signup %}">Sign up Here</a>
+  </div>
+ </div>
+
+ <div class="rightgroup">
+  <h2>Already have an Account?</h2>
+  <div style="float: left; width: 200px">
+   <form method="POST" action="{% url openauth:signin %}">
+    {% csrf_token %}
+    {{ sign_in.as_div }}
+    <div>
+    <input class="button" type="submit" value="Login"/>
+    </div>
+   </form>
+  </div>
+
+  <div style="margin-left: 210px; width: 150px; margin-top: 12px">
+   <h4 style="">Or login with...</h4>
+   <div class="button_group">
+    <a rel="dialog" href="{% url openauth:pop_prompt "google" %}?next={{next}}"><img src="/static/images/btn-google.png" alt="Google" style="margin:5px 15px 5px 5px;" /></a>
+    <br/>
+    <a rel="dialog" href="{% url openauth:pop_prompt "linkedin" %}?next={{next}}"><img src="/static/images/btn-linkedin.png" alt="Linkedin" style="margin:5px 15px 5px 5px;" /></a>
+   </div>
+  </div>
+ </div>
+
+</div>
